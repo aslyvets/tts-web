@@ -6,6 +6,7 @@
 </head>
 <body>
 <div class="container">
+    <input type="text" id="titleInput" placeholder="Enter title here">
     <textarea id="textInput"></textarea>
     <button onclick="submitText()">Submit</button>
     <audio id="audioPlayer" controls></audio>
@@ -20,7 +21,10 @@
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ text: text })
+            body: JSON.stringify({
+                text: text,
+                title: document.getElementById('titleInput').value
+            })
         })
             .then(response => {
                 if (!response.ok) {

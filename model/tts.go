@@ -11,3 +11,9 @@ type TTSRequest struct {
 type TTSResponse struct {
 	AudioContent []byte
 }
+
+type TTSRecord struct {
+	Title        string
+	InputText    string
+	AudioContent []byte
+}
