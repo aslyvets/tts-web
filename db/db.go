@@ -70,7 +70,7 @@ func FetchTTSAudioByID(db *sql.DB, id string) ([]byte, error) {
 }
 
 func FetchAllTTSRecords(db *sql.DB) ([]model.TTSListRecord, error) {
-	rows, err := db.Query("SELECT id, title, text_input FROM tts_responses")
+	rows, err := db.Query("SELECT id, title, text_input FROM tts_responses ORDER BY created_at DESC")
 
 	if err != nil {
 		return nil, err

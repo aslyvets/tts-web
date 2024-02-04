@@ -6,13 +6,20 @@
 </head>
 <body>
 <div class="container">
-    <label for="titleInput"></label><input type="text" id="titleInput" placeholder="Enter title here">
-    <label for="textInput"></label><textarea id="textInput"></textarea>
-    <button onclick="submitText()">Submit</button>
+    <div id="inputAreaContainer">
+        <label for="titleInput"></label><input type="text" id="titleInput" placeholder="Enter title here">
+        <label for="textInput"></label><textarea id="textInput"></textarea>
+        <button onclick="submitText()">Submit</button>
+    </div>
+    <div id="progressBarContainer">
+        <div class="spinner"></div>
+    </div>
     <audio id="audioPlayer" controls></audio>
-    <ul id="ttsRecordList"></ul>
-</div>
-<script src="../static/app.js"></script>
+    <div id="ttsRecordListContainer">
+        <ul id="ttsRecordList"></ul>
+    </div>
+    <script src="../static/app.js"></script>
 
+</div>
 </body>
 </html>

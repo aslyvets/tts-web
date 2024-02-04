@@ -4,6 +4,7 @@ function fetchAllRecords() {
             .then(response => response.json())
             .then(records => {
                 const list = document.getElementById('ttsRecordList');
+                list.innerHTML = '';
                 records.forEach(record => {
                     const listItem = document.createElement('li');
                     listItem.textContent = record.Title;
@@ -32,6 +33,15 @@ function fetchAndPlayRecord(record) {
 }
 
 function submitText() {
+    const inputAreaContainer = document.getElementById('inputAreaContainer');
+    const progressBarContainer = document.getElementById('progressBarContainer');
+
+    inputAreaContainer.style.display = 'none';
+    progressBarContainer.style.display = 'block';
+    progressBarContainer.style.display = 'flex';
+    progressBarContainer.justifyContent = 'center';
+    progressBarContainer.alignItems = 'center';
+
     fetch('/api/tts', {
         method: 'POST',
         headers: {
@@ -49,6 +59,8 @@ function submitText() {
             return response.blob();
         })
         .then(blob => {
+            progressBarContainer.style.display = 'none';
+            inputAreaContainer.style.display = 'block';
             const url = URL.createObjectURL(blob);
             const audioPlayer = document.getElementById('audioPlayer');
             audioPlayer.src = url;
@@ -57,5 +69,17 @@ function submitText() {
         })
         .catch(error => {
             console.error('There has been a problem with your fetch operation:', error);
+            progressBarContainer.style.display = 'none';
+            inputAreaContainer.style.display = 'block';
         });
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    const textInput = document.getElementById('textInput');
+    function resizeTextarea() {
+        this.style.height = 'auto';
+        this.style.height = this.scrollHeight + 'px';
+    }
+    textInput.addEventListener('input', resizeTextarea);
+    resizeTextarea.call(textInput);
+});
