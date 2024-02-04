@@ -41,3 +41,53 @@ audio#audioPlayer {
     margin-top: 20px;
     width: 100%;
 }
+
+#titleInput {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: none;
+    outline: none;
+    width: 300px;
+    transition: border 0.3s ease-in-out; /* Transition effect for border changes */
+}
+
+#titleInput:focus {
+    border-color: #4CAF50; /* Change border color on focus */
+    box-shadow: 0 0 8px 0 rgba(76,175,80,0.5); /* Add a subtle shadow on focus */
+}
+
+#titleInput:hover {
+    border-color: #999; /* Change border color on hover */
+}
+
+#ttsRecordList {
+    list-style: none;
+    padding: 0;
+    width: 100%;
+}
+
+#ttsRecordList li {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#ttsRecordList li:hover {
+    background-color: #f0f0f0;
+}
+
+#ttsRecordList li:active {
+    background-color: #e7e7e7;
+}
+
+#ttsRecordList li a {
+    text-decoration: none;
+    color: #4CAF50;
+    display: block;
+}

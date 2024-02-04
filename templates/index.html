@@ -1,48 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Text-to-Speech Web App</title>
+    <title>Text-to-Speech</title>
     <link rel="stylesheet" type="text/css" href="../static/styles.css">
 </head>
 <body>
 <div class="container">
-    <input type="text" id="titleInput" placeholder="Enter title here">
-    <textarea id="textInput"></textarea>
+    <label for="titleInput"></label><input type="text" id="titleInput" placeholder="Enter title here">
+    <label for="textInput"></label><textarea id="textInput"></textarea>
     <button onclick="submitText()">Submit</button>
     <audio id="audioPlayer" controls></audio>
+    <ul id="ttsRecordList"></ul>
 </div>
-
-<script>
-    function submitText() {
-        var text = document.getElementById('textInput').value;
-
-        fetch('/api/tts', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                text: text,
-                title: document.getElementById('titleInput').value
-            })
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.blob();
-            })
-            .then(blob => {
-                var url = URL.createObjectURL(blob);
-                var audioPlayer = document.getElementById('audioPlayer');
-                audioPlayer.src = url;
-                audioPlayer.play();
-            })
-            .catch(error => {
-                console.error('There has been a problem with your fetch operation:', error);
-            });
-    }
-</script>
+<script src="../static/app.js"></script>
 
 </body>
 </html>

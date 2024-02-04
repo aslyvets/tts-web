@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"github.com/gorilla/mux"
 	"html/template"
 	"log"
 	"net/http"
@@ -21,12 +22,16 @@ func main() {
 			log.Fatalf("Error closing the database connection: %v", err)
 		}
 	}(database)
-	http.HandleFunc("/", home)
-	http.HandleFunc("/tts", textToSpeechHandler)
-	http.HandleFunc("/api/tts", handleTTSRequest(database))
+
+	r := mux.NewRouter()
+	r.HandleFunc("/", home)
+	r.HandleFunc("/tts", textToSpeechHandler)
+	r.HandleFunc("/api/tts", handleTTSRequest(database))
+	r.HandleFunc("/api/tts/records", handleTTSRecordsRequest(database))
+	r.HandleFunc("/api/tts/records/{recordId}/audio", handleTTSRecordAudioByID(database))
 
 	fs := http.FileServer(http.Dir("static"))
-	http.Handle("/static/", http.StripPrefix("/static/", fs))
+	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fs))
 
 	port := os.Getenv("TTS_PORT")
 	if port == "" {
@@ -35,7 +40,7 @@ func main() {
 	}
 
 	log.Printf("Listening on port %s", port)
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), nil))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), r))
 }
 
 func textToSpeechHandler(w http.ResponseWriter, r *http.Request) {
@@ -100,5 +105,44 @@ func handleTTSRequest(database *sql.DB) http.HandlerFunc {
 		}
 		w.Header().Set("Content-Type", "audio/mpeg")
 		w.Write(audio)
+	}
+}
+
+func handleTTSRecordAudioByID(database *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "GET" {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+		vars := mux.Vars(r)
+		recordID := vars["recordId"]
+		audio, err := db.FetchTTSAudioByID(database, recordID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("Content-Type", "audio/mpeg")
+		w.Write(audio)
+	}
+}
+
+func handleTTSRecordsRequest(database *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "GET" {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+		records, err := db.FetchAllTTSRecords(database)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		jsonResponse, err := json.Marshal(records)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(jsonResponse)
 	}
 }

@@ -59,3 +59,31 @@ func SaveTTSAudio(db *sql.DB, record model.TTSRecord) error {
 
 	return nil
 }
+
+func FetchTTSAudioByID(db *sql.DB, id string) ([]byte, error) {
+	var audio []byte
+	err := db.QueryRow("SELECT audio_data FROM tts_responses WHERE id = $1", id).Scan(&audio)
+	if err != nil {
+		return nil, err
+	}
+	return audio, nil
+}
+
+func FetchAllTTSRecords(db *sql.DB) ([]model.TTSListRecord, error) {
+	rows, err := db.Query("SELECT id, title, text_input FROM tts_responses")
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var records []model.TTSListRecord
+	for rows.Next() {
+		var record model.TTSListRecord
+		if err := rows.Scan(&record.Id, &record.Title, &record.Text); err != nil {
+			return nil, err
+		}
+		records = append(records, record)
+	}
+	return records, nil
+}

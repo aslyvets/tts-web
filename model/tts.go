@@ -17,3 +17,9 @@ type TTSRecord struct {
 	InputText    string
 	AudioContent []byte
 }
+
+type TTSListRecord struct {
+	Id    string
+	Title string
+	Text  string
+}
