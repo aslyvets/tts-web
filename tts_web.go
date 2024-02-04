@@ -29,6 +29,7 @@ func main() {
 	r.HandleFunc("/api/tts", handleTTSRequest(database))
 	r.HandleFunc("/api/tts/records", handleTTSRecordsRequest(database))
 	r.HandleFunc("/api/tts/records/{recordId}/audio", handleTTSRecordAudioByID(database))
+	r.HandleFunc("/api/tts/records/{recordId}", handleDeleteTTSRecordByID(database))
 
 	fs := http.FileServer(http.Dir("static"))
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fs))
@@ -123,6 +124,22 @@ func handleTTSRecordAudioByID(database *sql.DB) http.HandlerFunc {
 		}
 		w.Header().Set("Content-Type", "audio/mpeg")
 		w.Write(audio)
+	}
+}
+
+func handleDeleteTTSRecordByID(database *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "DELETE" {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+		vars := mux.Vars(r)
+		recordID := vars["recordId"]
+		err := db.DeleteTTSRecordByID(database, recordID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 	}
 }
 

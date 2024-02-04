@@ -69,6 +69,14 @@ func FetchTTSAudioByID(db *sql.DB, id string) ([]byte, error) {
 	return audio, nil
 }
 
+func DeleteTTSRecordByID(db *sql.DB, id string) error {
+	_, err := db.Exec("DELETE FROM tts_responses WHERE id = $1", id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func FetchAllTTSRecords(db *sql.DB) ([]model.TTSListRecord, error) {
 	rows, err := db.Query("SELECT id, title, text_input FROM tts_responses ORDER BY created_at DESC")
 

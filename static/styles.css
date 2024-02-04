@@ -101,6 +101,15 @@ audio#audioPlayer {
     padding: 0;
 }
 
+#ttsRecordList li:hover {
+    background-color: #f0f0f0;
+}
+
+#ttsRecordList li span:hover {
+    text-decoration: underline;
+    font-weight: bold;
+}
+
 #progressBarContainer {
     display: none;
     position: relative;

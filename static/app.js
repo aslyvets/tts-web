@@ -1,3 +1,5 @@
+window.onload = fetchAllRecords();
+
 function fetchAllRecords() {
     return function () {
         fetch('/api/tts/records')
@@ -7,16 +9,43 @@ function fetchAllRecords() {
                 list.innerHTML = '';
                 records.forEach(record => {
                     const listItem = document.createElement('li');
+                    const deleteButton = document.createElement('span');
+
                     listItem.textContent = record.Title;
                     listItem.dataset.recordId = record.Id;
                     listItem.onclick = () => fetchAndPlayRecord(record);
+
+                    deleteButton.textContent = ' x';
+                    deleteButton.style.cursor = 'pointer';
+                    deleteButton.style.color = 'red';
+                    deleteButton.style.float = 'right';
+                    deleteButton.style.paddingLeft = '10px';
+                    deleteButton.style.paddingRight = '10px';
+                    deleteButton.onclick = (event) => {
+                        event.stopPropagation(); // Prevent triggering listItem's onclick
+                        deleteRecord(record.Id);
+                    };
+
+                    listItem.appendChild(deleteButton);
+
                     list.appendChild(listItem);
                 });
             });
     };
 }
 
-window.onload = fetchAllRecords();
+function deleteRecord(recordId) {
+    fetch(`/api/tts/records/${recordId}`, {
+        method: 'DELETE'
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            fetchAllRecords()();
+        })
+        .catch(error => console.error('Error deleting record:', error));
+}
 
 function fetchAndPlayRecord(record) {
     document.getElementById('titleInput').value = record.Title;
