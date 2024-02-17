@@ -20,8 +20,8 @@ textarea#textInput {
     font-size: 16px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    height: auto;
-    overflow-y: hidden;
+    height: calc(8 * 2.6em);
+    overflow-y: scroll;
 }
 
 button {

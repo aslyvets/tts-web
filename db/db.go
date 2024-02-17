@@ -9,6 +9,7 @@ import (
 	"os"
 	"time"
 	"tts-web/model"
+	"tts-web/service"
 )
 
 func InitializeDB() *sql.DB {
@@ -40,6 +41,10 @@ func SaveTTSAudio(db *sql.DB, record model.TTSRecord) error {
 	if err != nil {
 		log.Printf("Error generating UUID: %v", err)
 		return err
+	}
+
+	if isTitleExists(db, record.Title) {
+		record.Title = service.IncrementStringEnd(record.Title)
 	}
 
 	stmt, err := db.Prepare(
@@ -94,4 +99,17 @@ func FetchAllTTSRecords(db *sql.DB) ([]model.TTSListRecord, error) {
 		records = append(records, record)
 	}
 	return records, nil
+}
+
+// isTitleExists checks if a record with the given title exists in the database.
+func isTitleExists(db *sql.DB, title string) bool {
+	var exists bool
+	query := "SELECT EXISTS(SELECT 1 FROM tts_responses WHERE title = $1)"
+
+	err := db.QueryRow(query, title).Scan(&exists)
+	if err != nil {
+		log.Fatalf("Failed to execute query: %v", err)
+	}
+
+	return exists
 }

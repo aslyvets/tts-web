@@ -7,6 +7,10 @@ function fetchAllRecords() {
             .then(records => {
                 const list = document.getElementById('ttsRecordList');
                 list.innerHTML = '';
+                if (records.length > 0) {
+                    document.getElementById('titleInput').value = records[0].Title;
+                    document.getElementById('textInput').value = records[0].Text;
+                }
                 records.forEach(record => {
                     const listItem = document.createElement('li');
                     const deleteButton = document.createElement('span');
@@ -102,13 +106,3 @@ function submitText() {
             inputAreaContainer.style.display = 'block';
         });
 }
-
-document.addEventListener('DOMContentLoaded', function() {
-    const textInput = document.getElementById('textInput');
-    function resizeTextarea() {
-        this.style.height = 'auto';
-        this.style.height = this.scrollHeight + 'px';
-    }
-    textInput.addEventListener('input', resizeTextarea);
-    resizeTextarea.call(textInput);
-});
